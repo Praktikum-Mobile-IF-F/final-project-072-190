@@ -1,96 +1,96 @@
 class Product {
-  // List<String>? additionalImageUrls;
-  // dynamic advertisement;
+  List<String>? additionalImageUrls;
+  dynamic advertisement;
   String? brandName;
-  // String? colour;
-  // int? colourWayId;
-  // List<dynamic> facetGroupings;
-  // dynamic groupId;
-  // bool? hasMultiplePrices;
-  // bool? hasVariantColours;
+  String? colour;
+  int? colourWayId;
+  List<dynamic> facetGroupings;
+  dynamic groupId;
+  bool? hasMultiplePrices;
+  bool? hasVariantColours;
   int? id;
   String imageUrl;
-  // bool? isRestockingSoon;
-  // bool? isSellingFast;
+  bool? isRestockingSoon;
+  bool? isSellingFast;
   String name;
   Price? price;
-  // int? productCode;
-  // String? productType;
-  // bool? showVideo;
-  // dynamic sponsoredCampaignId;
+  int? productCode;
+  String? productType;
+  bool? showVideo;
+  dynamic sponsoredCampaignId;
   String? url;
-  // String? videoUrl;
+  String? videoUrl;
 
   Product({
-    // this.additionalImageUrls,
-    // this.advertisement,
+    this.additionalImageUrls,
+    this.advertisement,
     this.brandName,
-    // this.colour,
-    // this.colourWayId,
-    // this.facetGroupings = const [],
-    // this.groupId,
-    // this.hasMultiplePrices,
-    // this.hasVariantColours,
+    this.colour,
+    this.colourWayId,
+    this.facetGroupings = const [],
+    this.groupId,
+    this.hasMultiplePrices,
+    this.hasVariantColours,
     this.id,
     required this.imageUrl,
-    // this.isRestockingSoon,
-    // this.isSellingFast,
+    this.isRestockingSoon,
+    this.isSellingFast,
     required this.name,
     this.price,
-    // this.productCode,
-    // this.productType,
-    // this.showVideo,
-    // this.sponsoredCampaignId,
+    this.productCode,
+    this.productType,
+    this.showVideo,
+    this.sponsoredCampaignId,
     this.url,
-    // this.videoUrl,
+    this.videoUrl,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
-    // additionalImageUrls: List<String>.from(json["additionalImageUrls"].map((x) => x)),
-    // advertisement: json["advertisement"],
+    additionalImageUrls: List<String>.from(json["additionalImageUrls"].map((x) =>  "https://" + x)),
+    advertisement: json["advertisement"],
     brandName: json["brandName"],
-    // colour: json["colour"],
-    // colourWayId: json["colourWayId"],
-    // facetGroupings: List<dynamic>.from(json["facetGroupings"].map((x) => x)),
-    // groupId: json["groupId"],
-    // hasMultiplePrices: json["hasMultiplePrices"],
-    // hasVariantColours: json["hasVariantColours"],
+    colour: json["colour"],
+    colourWayId: json["colourWayId"],
+    facetGroupings: List<dynamic>.from(json["facetGroupings"].map((x) => x)),
+    groupId: json["groupId"],
+    hasMultiplePrices: json["hasMultiplePrices"],
+    hasVariantColours: json["hasVariantColours"],
     id: json["id"],
     imageUrl: "https://${json["imageUrl"]}",
-    // isRestockingSoon: json["isRestockingSoon"],
-    // isSellingFast: json["isSellingFast"],
+    isRestockingSoon: json["isRestockingSoon"],
+    isSellingFast: json["isSellingFast"],
     name: json["name"],
     price: Price.fromJson(json["price"]),
-    // productCode: json["productCode"],
-    // productType: json["productType"],
-    // showVideo: json["showVideo"],
-    // sponsoredCampaignId: json["sponsoredCampaignId"],
+    productCode: json["productCode"],
+    productType: json["productType"],
+    showVideo: json["showVideo"],
+    sponsoredCampaignId: json["sponsoredCampaignId"],
     url: json["url"],
-    // videoUrl: json["videoUrl"],
+    videoUrl: json["videoUrl"],
   );
 
   Map<String, dynamic> toJson() => {
-    // "additionalImageUrls": List<dynamic>.from(additionalImageUrls!.map((x) => x)),
-    // "advertisement": advertisement,
+    "additionalImageUrls": List<dynamic>.from(additionalImageUrls!.map((x) => x)),
+    "advertisement": advertisement,
     "brandName": brandName,
-    // "colour": colour,
-    // "colourWayId": colourWayId,
-    // "facetGroupings": List<dynamic>.from(facetGroupings.map((x) => x)),
-    // "groupId": groupId,
-    // "hasMultiplePrices": hasMultiplePrices,
-    // "hasVariantColours": hasVariantColours,
+    "colour": colour,
+    "colourWayId": colourWayId,
+    "facetGroupings": List<dynamic>.from(facetGroupings.map((x) => x)),
+    "groupId": groupId,
+    "hasMultiplePrices": hasMultiplePrices,
+    "hasVariantColours": hasVariantColours,
     "id": id,
     "imageUrl": imageUrl,
-    // "isRestockingSoon": isRestockingSoon,
-    // "isSellingFast": isSellingFast,
+    "isRestockingSoon": isRestockingSoon,
+    "isSellingFast": isSellingFast,
     "name": name,
     "price": price!.toJson(),
-    // "productCode": productCode,
-    // "productType": productType,
-    // "showVideo": showVideo,
-    // "sponsoredCampaignId": sponsoredCampaignId,
+    "productCode": productCode,
+    "productType": productType,
+    "showVideo": showVideo,
+    "sponsoredCampaignId": sponsoredCampaignId,
     "url": url,
-    // "videoUrl": videoUrl,
+    "videoUrl": videoUrl,
   };
 }
 
@@ -139,10 +139,12 @@ class PriceDetails {
     this.value,
   });
 
-  factory PriceDetails.fromJson(Map<String, dynamic> json) => PriceDetails(
-    text: json["text"],
-    value: json["value"].toDouble(),
-  );
+  factory PriceDetails.fromJson(Map<String, dynamic> json) {
+    return PriceDetails(
+      text: json["text"],
+      value: json["value"] != null ? json["value"].toDouble() : null,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "text": text,

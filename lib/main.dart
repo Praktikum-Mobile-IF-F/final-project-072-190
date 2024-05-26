@@ -1,22 +1,11 @@
+import 'package:final_project/navigation/app_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
 import 'dart:io';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    final envPath = ".env";
-    if (File(envPath).existsSync()) {
-      await dotenv.load(fileName: envPath);
-      print('Env file loaded successfully');
-      print('API_KEY: ${dotenv.env['API_KEY']}');
-    } else {
-      print('.env file does not exist at path: $envPath');
-    }
-  } catch (e) {
-    print('Error loading .env file: $e');
-  }
-
+void main() async {
   runApp(const MyApp());
 }
 
@@ -25,15 +14,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dotenv Example',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Dotenv Example'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Auth(),
         ),
-        body: Center(
-          child: Text('API_KEY: ${dotenv.env['API_KEY']}'),
+      ],
+      child: MaterialApp.router(
+        title: 'Praktikum TPM Final Project',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
+          useMaterial3: true,
         ),
+        debugShowCheckedModeBanner: false,
+        routerConfig: AppNavigation.router,
       ),
     );
   }
