@@ -26,21 +26,71 @@ class _SignInPageState extends State<SignInScreen> {
       String email = _emailController.text.trim();
       String password = _passwordController.text.trim();
 
-      Provider.of<Auth>(context, listen: false).signin(email, password);
+      try {
+        await Provider.of<Auth>(context, listen: false).signin(email, password);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign Up Successful!'),
+          ),
+        );
+        context.goNamed("home");
 
-
-      // if (isLoggedIn) {
-      //   await prefs.setBool('isLoggedIn', true);
-      //   await prefs.setString('loggedInUserData', json.encode(loggedInUser));
-      //   context.goNamed("home");
-      // } else {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(
-      //       content: Text('Invalid username or password!'),
-      //     ),
-      //   );
-      // }
+        _emailController.clear();
+        _passwordController.clear();
+      } catch (error) {
+        _showErrorDialog(error.toString());
+      }
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.error_outline, color: errorColor),
+            SizedBox(width: 10),
+            Text(
+              'Error',
+              style: TextStyle(
+                color: errorColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            color: textColor1,
+            fontSize: 16,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: errorColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              'Okay',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override

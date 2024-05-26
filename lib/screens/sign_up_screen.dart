@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:final_project/utils/colors.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:final_project/utils/colors.dart';
 import '../providers/auth_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -31,20 +30,72 @@ class _SignUpPageState extends State<SignUpScreen> {
           : "";
       String password = _passwordController.text.trim();
 
-      Provider.of<Auth>(context, listen: false).signup(email, password);
+      try {
+        await Provider.of<Auth>(context, listen: false).signup(email, password);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign Up Successful!'),
+          ),
+        );
+        context.goNamed("signin");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sign Up Successful!'),
-        ),
-      );
-
-      context.goNamed("signin");
-
-      _emailController.clear();
-      _birthDateController.clear();
-      _passwordController.clear();
+        _emailController.clear();
+        _birthDateController.clear();
+        _passwordController.clear();
+      } catch (error) {
+        _showErrorDialog(error.toString());
+      }
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.error_outline, color: errorColor),
+            SizedBox(width: 10),
+            Text(
+              'Error',
+              style: TextStyle(
+                color: errorColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            color: textColor1,
+            fontSize: 16,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: errorColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              'Okay',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -54,105 +105,100 @@ class _SignUpPageState extends State<SignUpScreen> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != _selectedDate)
+    if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
       });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.only(top: 60.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: size.height * 0.03),
-                  Text(
-                    "Sign Up",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 37,
-                      color: textColor1,
-                    ),
+        child: Container(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: size.height * 0.03),
+                Text(
+                  "Sign Up",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 37,
+                    color: textColor1,
                   ),
-                  const SizedBox(height: 15),
-                  _inputField("Email", _emailController),
-                  _datePickerField("Date of birth", _selectedDate),
-                  _inputField("Password", _passwordController, isPassword: true),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 22),
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: _signUp,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: buttonColor1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            minimumSize: Size(size.width, 68),
+                ),
+                const SizedBox(height: 15),
+                _inputField("Email", _emailController),
+                _datePickerField("Date of birth", _selectedDate),
+                _inputField("Password", _passwordController, isPassword: true),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 22),
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: _signUp,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 22,
-                            ),
+                          minimumSize: Size(size.width, 68),
+                        ),
+                        child: const Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 22,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Text.rich(
-                          TextSpan(
-                            text: "Already have an account? ",
-                            style: TextStyle(
-                              color: textColor2,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Sign In Here",
-                                style: TextStyle(
-                                  color: textColor3,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    context.goNamed("signin");
-                                  },
+                      ),
+                      const SizedBox(height: 20),
+                      Text.rich(
+                        TextSpan(
+                          text: "Already have an account? ",
+                          style: TextStyle(
+                            color: textColor2,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: "Sign In Here",
+                              style: TextStyle(
+                                color: textColor3,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  context.goNamed("signin");
+                                },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-
-                ],
-              ),
+                ),
+              ],
             ),
-          )
+          ),
+        ),
       ),
     );
   }
 
-  Widget _inputField(String text, TextEditingController controller,
-      {bool isPassword = false}) {
+  Widget _inputField(String text, TextEditingController controller, {bool isPassword = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 25,
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -164,10 +210,7 @@ class _SignUpPageState extends State<SignUpScreen> {
             controller: controller,
             obscureText: isPassword && _obscureText,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 22,
-              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
               fillColor: backgroundColor5,
               filled: true,
               border: OutlineInputBorder(
@@ -175,10 +218,7 @@ class _SignUpPageState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
               hintText: "Enter " + text.toLowerCase(),
-              hintStyle: const TextStyle(
-                color: Colors.black45,
-                fontSize: 18,
-              ),
+              hintStyle: const TextStyle(color: Colors.black45, fontSize: 18),
               suffixIcon: isPassword
                   ? GestureDetector(
                 onTap: () {
@@ -192,9 +232,7 @@ class _SignUpPageState extends State<SignUpScreen> {
                 ),
               )
                   : null,
-              errorStyle: const TextStyle(
-                fontSize: 14,
-              ),
+              errorStyle: const TextStyle(fontSize: 14),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -216,10 +254,7 @@ class _SignUpPageState extends State<SignUpScreen> {
 
   Widget _datePickerField(String text, DateTime? selectedDate) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 25,
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -234,10 +269,7 @@ class _SignUpPageState extends State<SignUpScreen> {
             ),
             readOnly: true,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 22,
-              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
               fillColor: backgroundColor5,
               filled: true,
               border: OutlineInputBorder(
@@ -245,17 +277,12 @@ class _SignUpPageState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
               hintText: "Select " + text.toLowerCase(),
-              hintStyle: const TextStyle(
-                color: Colors.black45,
-                fontSize: 18,
-              ),
+              hintStyle: const TextStyle(color: Colors.black45, fontSize: 18),
               suffixIcon: const Icon(
                 Icons.calendar_today_outlined,
                 color: Colors.black26,
               ),
-              errorStyle: const TextStyle(
-                fontSize: 14,
-              ),
+              errorStyle: const TextStyle(fontSize: 14),
             ),
             validator: (value) {
               if (selectedDate == null) {

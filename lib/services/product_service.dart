@@ -25,7 +25,6 @@ class ProductService {
         List<Product> products = List<Product>.from(
           data['products'].map((product) => Product.fromJson(product)),
         );
-        print(products[0].imageUrl);
         return products;
       } else {
         return [];
