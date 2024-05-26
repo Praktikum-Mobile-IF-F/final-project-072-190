@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class ProductDetailService {
   static const String baseUrl = 'https://asos-com1.p.rapidapi.com/products/detail';
-  static const String apiKey = '66884d06f8msh130beb94e7dfaedp17374fjsn116602c63ea0';
+  final String apiKey = dotenv.env['RAPID_API_KEY'] ?? '';
   static const String apiHost = 'asos-com1.p.rapidapi.com';
 
   Future<List<Product>> fetchProductDetail(String url) async {
@@ -25,7 +25,6 @@ class ProductDetailService {
         List<Product> products = List<Product>.from(
           data['products'].map((product) => Product.fromJson(product)),
         );
-        print(products[0].imageUrl);
         return products;
       } else {
         return [];
