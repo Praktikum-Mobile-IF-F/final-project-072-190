@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class ProductDetail {
   final int brandId;
   final String brandName;
@@ -6,7 +8,7 @@ class ProductDetail {
   final List<Variant> variants;
   final String gender;
   final String name;
-  final List<Price> prices; // Ubah price menjadi prices
+  final List<Price> prices;
 
   ProductDetail({
     required this.brandId,
@@ -16,7 +18,7 @@ class ProductDetail {
     required this.variants,
     required this.gender,
     required this.name,
-    required this.prices, // Ubah price menjadi prices
+    required this.prices,
   });
 
   factory ProductDetail.fromJson(Map<String, dynamic> json) {
@@ -36,13 +38,10 @@ class ProductDetail {
           ? (json['prices'] as List<dynamic>)
           .map((price) => Price.fromJson(price))
           .toList()
-          : [], // Jika prices null, berikan list kosong sebagai default
+          : [],
     );
   }
 }
-
-
-
 
 class Price {
   final String currency;
@@ -78,7 +77,6 @@ class PriceDetails {
   }
 }
 
-
 class Description {
   final String aboutMe;
   final bool aboutMeVisible;
@@ -100,7 +98,7 @@ class Description {
       aboutMeVisible: json['aboutMeVisible'],
       brandDescription: json['brandDescription'],
       brandDescriptionVisible: json['brandDescriptionVisible'],
-      productDescription: json['productDescription']
+      productDescription: json['productDescription'],
     );
   }
 }

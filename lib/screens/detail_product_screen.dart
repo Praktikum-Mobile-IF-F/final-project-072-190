@@ -14,12 +14,13 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Future<ProductDetail?> _productDetailFuture;
   String? _selectedSize;
+  static const Color backgroundColor1 = Color(0xffFFFFFF);
+  bool _isFavorite = false;
 
   @override
   void initState() {
     super.initState();
-    _productDetailFuture =
-        ProductDetailService().fetchProductDetail(widget.url);
+    _productDetailFuture = ProductDetailService().fetchProductDetail(widget.url);
   }
 
   @override
@@ -43,7 +44,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 500, // Sesuaikan tinggi PageView sesuai kebutuhan
+                    height: 500,
                     child: PageView.builder(
                       itemCount: productDetail.images.length,
                       itemBuilder: (context, index) {
@@ -66,8 +67,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ExpansionTile(
                     title: Text(
                       'About Me',
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     children: [
                       Padding(
@@ -83,8 +83,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ExpansionTile(
                     title: Text(
                       'Brand Description',
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     children: [
                       Padding(
@@ -100,8 +99,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ExpansionTile(
                     title: Text(
                       'Product Description',
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     children: [
                       Padding(
@@ -113,38 +111,62 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Select Size:',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
                   SizedBox(height: 8),
                   _buildSizeDropdown(productDetail.variants),
                   SizedBox(height: 16),
-                  if (productDetail.prices
-                      .isNotEmpty) // Periksa jika prices tidak kosong
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Center(
+                    child: Column(
                       children: [
-                        Text(
-                          'Prices',
-                          style: TextStyle(fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_selectedSize == null || _selectedSize == 'Select Size') {
+                                _showSizeErrorDialog();
+                              } else {
+                                addToCart(productDetail, _selectedSize!);
+                              }
+                            },
+                            child: Text('Add to Cart'),
+                          ),
                         ),
                         SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: productDetail.prices.map((price) {
-                            return ListTile(
-                              title: Text(
-                                  '${price.currency} ${price.productPrice
-                                      .value}'),
-                              subtitle: Text(price.productPrice.text),
-                            );
-                          }).toList(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(backgroundColor1),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isFavorite = !_isFavorite;
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                    _isFavorite ? 'Added to favorites' : 'Removed from favorites',
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Favorite',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                SizedBox(width: 2),
+                                Icon(
+                                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                                  color: _isFavorite ? Colors.red : Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
+                  ),
                 ],
               ),
             );
@@ -161,19 +183,16 @@ class _DetailScreenState extends State<DetailScreen> {
       return Center(child: Text('No sizes available'));
     }
 
-    // Extract unique sizes from variants
-    List<String> sizes = variants.map((variant) => variant.size)
-        .toSet()
-        .toList();
+    List<String> sizes = variants.map((variant) => variant.size).toSet().toList();
+    sizes.insert(0, 'Select Size');
 
-    String initialValue = sizes.isNotEmpty ? sizes[0] : '';
+    String initialValue = _selectedSize ?? sizes[0];
 
     return DropdownButton<String>(
       value: _selectedSize ?? initialValue,
       onChanged: (String? selectedSize) {
         setState(() {
           _selectedSize = selectedSize;
-          // You can implement your logic here when a size is selected
         });
       },
       items: sizes.map((String size) {
@@ -184,5 +203,28 @@ class _DetailScreenState extends State<DetailScreen> {
       }).toList(),
     );
   }
-}
 
+  void addToCart(ProductDetail product, String selectedSize) {
+    print('Product ${product.name} added to cart with size: $selectedSize');
+  }
+
+  void _showSizeErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Failed'),
+          content: Text('Please select the size first'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
