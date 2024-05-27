@@ -1,91 +1,164 @@
 class ProductDetail {
   final int brandId;
   final String brandName;
-  final String description;
+  final Description description;
+  final List<ImageModel> images;
+  final List<Variant> variants;
   final String gender;
-  final bool hasPaymentPromotionAvailable;
-  final bool hasVariantsWithIngredients;
-  final bool hasVariantsWithProp65Risk;
-  final int id;
-  final bool isDiscontinued;
-  final bool isNoSize;
-  final bool isOneSize;
-  final List<String> images;
-  final List<String> looks;
-  final List<String> media;
   final String name;
-  final String pdpLayout;
-  final List<String> plpIds;
-  final double price;
-  final String productCode;
-  final String productType;
-  final int saveCount;
-  final bool sellingFast;
-  final String shippingRestrictions;
-  final bool showUpSell;
-  final String sizeGuide;
-  final bool sizeGuideVisible;
-  final int totalNumberOfColours;
+  final List<Price> prices; // Ubah price menjadi prices
 
   ProductDetail({
     required this.brandId,
     required this.brandName,
     required this.description,
-    required this.gender,
-    required this.hasPaymentPromotionAvailable,
-    required this.hasVariantsWithIngredients,
-    required this.hasVariantsWithProp65Risk,
-    required this.id,
-    required this.isDiscontinued,
-    required this.isNoSize,
-    required this.isOneSize,
     required this.images,
-    required this.looks,
-    required this.media,
+    required this.variants,
+    required this.gender,
     required this.name,
-    required this.pdpLayout,
-    required this.plpIds,
-    required this.price,
-    required this.productCode,
-    required this.productType,
-    required this.saveCount,
-    required this.sellingFast,
-    required this.shippingRestrictions,
-    required this.showUpSell,
-    required this.sizeGuide,
-    required this.sizeGuideVisible,
-    required this.totalNumberOfColours,
+    required this.prices, // Ubah price menjadi prices
   });
 
   factory ProductDetail.fromJson(Map<String, dynamic> json) {
     return ProductDetail(
-      brandId: json['brandId'],
-      brandName: json['brandName'],
-      description: json['description'],
-      gender: json['gender'],
-      hasPaymentPromotionAvailable: json['hasPaymentPromotionAvailable'],
-      hasVariantsWithIngredients: json['hasVariantsWithIngredients'],
-      hasVariantsWithProp65Risk: json['hasVariantsWithProp65Risk'],
-      id: json['id'],
-      isDiscontinued: json['isDiscontinued'],
-      isNoSize: json['isNoSize'],
-      isOneSize: json['isOneSize'],
-      images: List<String>.from(json['images']),
-      looks: List<String>.from(json['looks']),
-      media: List<String>.from(json['media']),
-      name: json['name'],
-      pdpLayout: json['pdpLayout'],
-      plpIds: List<String>.from(json['plpIds']),
-      price: json['price'] != null ? json['price'].toDouble() : 0.0,
-      productCode: json['productCode'],
-      productType: json['productType'],
-      saveCount: json['saveCount'],
-      sellingFast: json['sellingFast'],
-      shippingRestrictions: json['shippingRestrictions'],
-      showUpSell: json['showUpSell'],
-      sizeGuide: json['sizeGuide'],
-      sizeGuideVisible: json['sizeGuideVisible'],
-      totalNumberOfColours: json['totalNumberOfColours'],
+      brandId: json['brandId'] ?? 0,
+      brandName: json['brandName'] ?? '',
+      description: Description.fromJson(json['description'] ?? {}),
+      images: (json['images'] as List<dynamic>? ?? [])
+          .map((image) => ImageModel.fromJson(image))
+          .toList(),
+      variants: (json['variants'] as List<dynamic>? ?? [])
+          .map((variant) => Variant.fromJson(variant))
+          .toList(),
+      gender: json['gender'] ?? '',
+      name: json['name'] ?? '',
+      prices: json['prices'] != null
+          ? (json['prices'] as List<dynamic>)
+          .map((price) => Price.fromJson(price))
+          .toList()
+          : [], // Jika prices null, berikan list kosong sebagai default
+    );
+  }
+}
+
+
+
+
+class Price {
+  final String currency;
+  final PriceDetails productPrice;
+
+  Price({
+    required this.currency,
+    required this.productPrice,
+  });
+
+  factory Price.fromJson(Map<String, dynamic> json) {
+    return Price(
+      currency: json['currency'],
+      productPrice: PriceDetails.fromJson(json['productPrice']),
+    );
+  }
+}
+
+class PriceDetails {
+  final double value;
+  final String text;
+
+  PriceDetails({
+    required this.value,
+    required this.text,
+  });
+
+  factory PriceDetails.fromJson(Map<String, dynamic> json) {
+    return PriceDetails(
+      value: json['value'].toDouble(),
+      text: json['text'],
+    );
+  }
+}
+
+
+class Description {
+  final String aboutMe;
+  final bool aboutMeVisible;
+  final String brandDescription;
+  final bool brandDescriptionVisible;
+
+  Description({
+    required this.aboutMe,
+    required this.aboutMeVisible,
+    required this.brandDescription,
+    required this.brandDescriptionVisible,
+  });
+
+  factory Description.fromJson(Map<String, dynamic> json) {
+    return Description(
+      aboutMe: json['aboutMe'],
+      aboutMeVisible: json['aboutMeVisible'],
+      brandDescription: json['brandDescription'],
+      brandDescriptionVisible: json['brandDescriptionVisible'],
+    );
+  }
+}
+
+class ImageModel {
+  final String alternateText;
+  final String colour;
+  final String imageType;
+  final bool isPrimary;
+  final bool isVisible;
+  final String url;
+
+  ImageModel({
+    required this.alternateText,
+    required this.colour,
+    required this.imageType,
+    required this.isPrimary,
+    required this.isVisible,
+    required this.url,
+  });
+
+  factory ImageModel.fromJson(Map<String, dynamic> json) {
+    return ImageModel(
+      alternateText: json['alternateText'],
+      colour: json['colour'] ?? '',
+      imageType: json['imageType'],
+      isPrimary: json['isPrimary'],
+      isVisible: json['isVisible'],
+      url: json['url'],
+    );
+  }
+}
+
+class Variant {
+  final String colour;
+  final int colourWayId;
+  final String size;
+  final int sizeId;
+  final int sizeOrder;
+  final String sku;
+  final int variantId;
+
+  Variant({
+    required this.colour,
+    required this.colourWayId,
+    required this.size,
+    required this.sizeId,
+    required this.sizeOrder,
+    required this.sku,
+    required this.variantId,
+  });
+
+  factory Variant.fromJson(Map<String, dynamic> json) {
+    return Variant(
+      colour: json['colour'],
+      colourWayId: json['colourWayId'],
+      size: json['size'],
+      sizeId: json['sizeId'],
+      sizeOrder: json['sizeOrder'],
+      sku: json['sku'],
+      variantId: json['variantId'],
     );
   }
 }
