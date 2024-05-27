@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:final_project/models/product_detail.dart';
 import 'package:final_project/services/product_detail_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DetailScreen extends StatefulWidget {
   final String url;
@@ -14,6 +13,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   late Future<ProductDetail?> _productDetailFuture;
+  String? _selectedSize;
 
   @override
   void initState() {
@@ -42,23 +42,8 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    productDetail.brandName,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    productDetail.description.aboutMe,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Images',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
                   SizedBox(
-                    height: 400, // Sesuaikan tinggi PageView sesuai kebutuhan
+                    height: 500, // Sesuaikan tinggi PageView sesuai kebutuhan
                     child: PageView.builder(
                       itemCount: productDetail.images.length,
                       itemBuilder: (context, index) {
@@ -74,33 +59,86 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Variants',
+                    productDetail.name,
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  SizedBox(height: 16),
+                  ExpansionTile(
+                    title: Text(
+                      'About Me',
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          productDetail.description.aboutMe,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  ExpansionTile(
+                    title: Text(
+                      'Brand Description',
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          productDetail.description.brandDescription,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  ExpansionTile(
+                    title: Text(
+                      'Product Description',
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          productDetail.description.productDescription,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Select Size:',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
-                  Column(
-                    children: productDetail.variants.map((variant) {
-                      return ListTile(
-                        title: Text(variant.sku),
-                        subtitle: Text(variant.size),
-                      );
-                    }).toList(),
-                  ),
+                  _buildSizeDropdown(productDetail.variants),
                   SizedBox(height: 16),
-                  if (productDetail.prices.isNotEmpty) // Periksa jika prices tidak kosong
+                  if (productDetail.prices
+                      .isNotEmpty) // Periksa jika prices tidak kosong
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Prices',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 20,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: productDetail.prices.map((price) {
                             return ListTile(
-                              title: Text('${price.currency} ${price.productPrice.value}'),
+                              title: Text(
+                                  '${price.currency} ${price.productPrice
+                                      .value}'),
                               subtitle: Text(price.productPrice.text),
                             );
                           }).toList(),
@@ -117,4 +155,34 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
+
+  Widget _buildSizeDropdown(List<Variant> variants) {
+    if (variants.isEmpty) {
+      return Center(child: Text('No sizes available'));
+    }
+
+    // Extract unique sizes from variants
+    List<String> sizes = variants.map((variant) => variant.size)
+        .toSet()
+        .toList();
+
+    String initialValue = sizes.isNotEmpty ? sizes[0] : '';
+
+    return DropdownButton<String>(
+      value: _selectedSize ?? initialValue,
+      onChanged: (String? selectedSize) {
+        setState(() {
+          _selectedSize = selectedSize;
+          // You can implement your logic here when a size is selected
+        });
+      },
+      items: sizes.map((String size) {
+        return DropdownMenuItem<String>(
+          value: size,
+          child: Text(size),
+        );
+      }).toList(),
+    );
+  }
 }
+

@@ -84,12 +84,14 @@ class Description {
   final bool aboutMeVisible;
   final String brandDescription;
   final bool brandDescriptionVisible;
+  final String productDescription;
 
   Description({
     required this.aboutMe,
     required this.aboutMeVisible,
     required this.brandDescription,
     required this.brandDescriptionVisible,
+    required this.productDescription,
   });
 
   factory Description.fromJson(Map<String, dynamic> json) {
@@ -98,6 +100,7 @@ class Description {
       aboutMeVisible: json['aboutMeVisible'],
       brandDescription: json['brandDescription'],
       brandDescriptionVisible: json['brandDescriptionVisible'],
+      productDescription: json['productDescription']
     );
   }
 }
