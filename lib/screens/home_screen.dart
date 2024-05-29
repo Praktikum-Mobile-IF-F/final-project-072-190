@@ -1,6 +1,7 @@
 import 'package:final_project/screens/detail_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/models/product.dart';
+import 'package:go_router/go_router.dart';
 import 'package:final_project/services/product_service.dart';
 import 'package:final_project/utils/colors.dart';
 
@@ -44,6 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.shopping_cart_outlined,
+            ),
+            onPressed: () => context.goNamed("shopping-cart"),
+          ),
+        ],
       ),
       body: isLoading
           ? Center(

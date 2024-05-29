@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'favorite.g.dart';
+part 'cart.g.dart';
 
-@HiveType(typeId: 1)
-class Favorite extends HiveObject {
+@HiveType(typeId: 3)
+class Cart extends HiveObject {
   @HiveField(0)
   String? id;
 
@@ -11,16 +11,16 @@ class Favorite extends HiveObject {
   String email;
 
   @HiveField(2)
-  List<FavoriteProduct> products;
+  List<CartProduct> products;
 
-  Favorite({
+  Cart({
     required this.email,
     required this.products,
   });
 }
 
-@HiveType(typeId: 2)
-class FavoriteProduct extends HiveObject {
+@HiveType(typeId: 4)
+class CartProduct extends HiveObject {
   @HiveField(0)
   int productId;
 
@@ -28,7 +28,7 @@ class FavoriteProduct extends HiveObject {
   String name;
 
   @HiveField(2)
-  String brandName;
+  String productSize;
 
   @HiveField(3)
   String imageUrl;
@@ -42,10 +42,10 @@ class FavoriteProduct extends HiveObject {
   @HiveField(6)
   String productUrl;
 
-  FavoriteProduct({
+  CartProduct({
     required this.productId,
     required this.name,
-    required this.brandName,
+    required this.productSize,
     required this.imageUrl,
     required this.priceCurrency,
     required this.priceValue,

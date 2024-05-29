@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfileScreen> {
   Future<void> _signOut(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('user');
-    context.goNamed("signin");
+    context.go('/signin');
   }
 
   @override
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfileScreen> {
         actions: [
           IconButton(
             icon: const Icon(
-              Icons.logout,
+              Icons.shopping_cart_outlined,
             ),
             onPressed: () => _signOut(context),
           ),

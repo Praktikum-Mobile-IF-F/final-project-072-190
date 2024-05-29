@@ -5,9 +5,12 @@ import 'package:go_router/go_router.dart';
 class MainWrapper extends StatefulWidget {
   const MainWrapper({
     required this.navigationShell,
+    this.child,
     super.key,
   });
+
   final StatefulNavigationShell navigationShell;
+  final Widget? child;
 
   @override
   State<MainWrapper> createState() => _MainWrapperState();
@@ -29,7 +32,7 @@ class _MainWrapperState extends State<MainWrapper> {
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
-        child: widget.navigationShell,
+        child: widget.child ?? widget.navigationShell,
       ),
       bottomNavigationBar: SizedBox(
         height: 68,

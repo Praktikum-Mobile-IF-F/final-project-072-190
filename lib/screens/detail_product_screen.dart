@@ -1,8 +1,10 @@
 
+import 'package:final_project/models/cart.dart';
 import 'package:final_project/models/product.dart';
 import 'dart:convert';
 import 'package:final_project/models/favorite.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:final_project/models/product_detail.dart';
 import 'package:final_project/services/product_detail_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -22,7 +24,6 @@ class _DetailScreenState extends State<DetailScreen> {
   late Future<ProductDetail?> _productDetailFuture;
   String? _selectedSize;
   static const Color backgroundColor1 = Color(0xffFFFFFF);
-  late bool _isFavorite = false;
   late bool isFavorited = false;
 
   @override
@@ -44,40 +45,104 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<void> _checkIfFavorited() async {
-    // Box<Favorite> favoriteBox = await Hive.openBox<Favorite>('favoriteBox');
-    // final favorite = favoriteBox.get(_email);
-    // setState(() {
-    //   _isFavorite = favorite.products.any((product) => product.id == _productDetailFuture.id);
-    // });
+    Box<Favorite> favoriteBox = await Hive.openBox<Favorite>('favoriteBox');
+    final favorite = favoriteBox.get(_email);
+    setState(() {
+      isFavorited = favorite?.products.any((product) => product.productId == widget.product.id) ?? false;
+    });
   }
 
   void _toggleFavorite() async {
-    // Box<Favorite> favoriteBox = await Hive.openBox<Favorite>('favorites');
-    // Favorite? favorite = favoriteBox.values.firstWhere(
-    //       (favorite) => favorite.email == _email,
-    //   orElse: () => null,
-    // );
-    // if (favorite != null) {
-    //   if (_isFavorite) {
-    //     favorite.products.removeWhere((product) => product.id == _productDetailFuture.id);
-    //   } else {
-    //     favorite.products.add(_productDetailFuture);
-    //   }
-    //   favorite.save();
-    // } else {
-    //   favorite = Favorite(id: UniqueKey().toString(), email: _email, products: [_productDetailFuture]);
-    //   favoriteBox.add(favorite);
-    // }
-    // setState(() {
-    //   _isFavorite = !_isFavorite;
-    // });
+    final favoriteBox = await Hive.openBox<Favorite>('favoriteBox');
+    setState(() {
+      isFavorited = !isFavorited;
+    });
+
+    Favorite? favorite = favoriteBox.get(_email);
+    if (isFavorited) {
+      if (favorite == null) {
+        favorite = Favorite(email: _email, products: [convertProduct(widget.product)]);
+        favoriteBox.put(_email, favorite);
+      } else {
+        favorite.products.add(convertProduct(widget.product));
+        favorite.save();
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Added to favorites'),
+        ),
+      );
+    } else {
+      if (favorite != null) {
+        favorite.products.removeWhere((product) => product.productId == widget.product.id);
+        favorite.save();
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Removed from favorites'),
+        ),
+      );
+    }
+  }
+
+  FavoriteProduct convertProduct(Product product) {
+    return FavoriteProduct(
+      productId: product.id!,
+      name: product.name ?? '',
+      brandName: product.brandName?? '',
+      imageUrl: product.imageUrl ?? '',
+      priceCurrency: product.price?.currency ?? '',
+      priceValue: product.price?.current?.value ?? 0.0,
+      productUrl: product.url ?? '',
+    );
+  }
+
+  void addToCart(Product product, String selectedSize) async {
+    final cartBox = await Hive.openBox<Cart>('cartBox');
+
+    Cart? cart = cartBox.get(_email);
+    if (cart == null) {
+      cart = Cart(email: _email, products: []);
+      cartBox.put(_email, cart);
+    }
+
+    cart.products.add(CartProduct(
+      productId: product.id!,
+      name: product.name,
+      productSize: selectedSize,
+      imageUrl: product.imageUrl,
+      priceCurrency: product.price?.currency ?? '',
+      priceValue: product.price?.current?.value ?? 0.0,
+      productUrl: product.url ?? '',
+    ));
+    cart.save();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Successfully added to cart with size: $selectedSize'),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product Detail'),
+        title: const Text(
+          'Product Detail',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.shopping_cart_outlined,
+            ),
+            onPressed: () => context.goNamed("shopping-cart"),
+          ),
+        ],
       ),
       body: FutureBuilder<ProductDetail?>(
         future: _productDetailFuture,
@@ -183,7 +248,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               if (_selectedSize == null || _selectedSize == 'Select Size') {
                                 _showSizeErrorDialog();
                               } else {
-                                addToCart(productDetail, _selectedSize!);
+                                addToCart(widget.product, _selectedSize!);
                               }
                             },
                             child: Text('Add to Cart'),
@@ -196,19 +261,8 @@ class _DetailScreenState extends State<DetailScreen> {
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(backgroundColor1),
                             ),
-                            onPressed: _toggleFavorite,
-
-                            //     () {
-                            //   setState(() {
-                            //     _isFavorite = !_isFavorite;
-                            //     final snackBar = SnackBar(
-                            //       content: Text(
-                            //         _isFavorite ? 'Added to favorites' : 'Removed from favorites',
-                            //       ),
-                            //     );
-                            //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                            //   });
-                            // },
+                            onPressed:
+                              _toggleFavorite,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -218,8 +272,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                                 SizedBox(width: 2),
                                 Icon(
-                                  _isFavorite ? Icons.favorite : Icons.favorite_border,
-                                  color: _isFavorite ? Colors.red : Colors.black,
+                                  isFavorited ? Icons.favorite : Icons.favorite_border,
+                                  color: isFavorited ? Colors.red : Colors.black,
                                 ),
                               ],
                             ),
@@ -263,10 +317,6 @@ class _DetailScreenState extends State<DetailScreen> {
         );
       }).toList(),
     );
-  }
-
-  void addToCart(ProductDetail product, String selectedSize) {
-    print('Product ${product.name} added to cart with size: $selectedSize');
   }
 
   void _showSizeErrorDialog() {

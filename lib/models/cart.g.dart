@@ -1,29 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'favorite.dart';
+part of 'cart.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class FavoriteAdapter extends TypeAdapter<Favorite> {
+class CartAdapter extends TypeAdapter<Cart> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
-  Favorite read(BinaryReader reader) {
+  Cart read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Favorite(
+    return Cart(
       email: fields[1] as String,
-      products: (fields[2] as List).cast<FavoriteProduct>(),
+      products: (fields[2] as List).cast<CartProduct>(),
     )..id = fields[0] as String?;
   }
 
   @override
-  void write(BinaryWriter writer, Favorite obj) {
+  void write(BinaryWriter writer, Cart obj) {
     writer
       ..writeByte(3)
       ..writeByte(0)
@@ -40,25 +40,25 @@ class FavoriteAdapter extends TypeAdapter<Favorite> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FavoriteAdapter &&
+      other is CartAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
 
-class FavoriteProductAdapter extends TypeAdapter<FavoriteProduct> {
+class CartProductAdapter extends TypeAdapter<CartProduct> {
   @override
-  final int typeId = 2;
+  final int typeId = 4;
 
   @override
-  FavoriteProduct read(BinaryReader reader) {
+  CartProduct read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return FavoriteProduct(
+    return CartProduct(
       productId: fields[0] as int,
       name: fields[1] as String,
-      brandName: fields[2] as String,
+      productSize: fields[2] as String,
       imageUrl: fields[3] as String,
       priceCurrency: fields[4] as String,
       priceValue: fields[5] as double,
@@ -67,7 +67,7 @@ class FavoriteProductAdapter extends TypeAdapter<FavoriteProduct> {
   }
 
   @override
-  void write(BinaryWriter writer, FavoriteProduct obj) {
+  void write(BinaryWriter writer, CartProduct obj) {
     writer
       ..writeByte(7)
       ..writeByte(0)
@@ -75,7 +75,7 @@ class FavoriteProductAdapter extends TypeAdapter<FavoriteProduct> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.brandName)
+      ..write(obj.productSize)
       ..writeByte(3)
       ..write(obj.imageUrl)
       ..writeByte(4)
@@ -92,7 +92,7 @@ class FavoriteProductAdapter extends TypeAdapter<FavoriteProduct> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FavoriteProductAdapter &&
+      other is CartProductAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

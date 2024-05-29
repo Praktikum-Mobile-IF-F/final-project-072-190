@@ -3,6 +3,7 @@ import 'package:final_project/screens/home_screen.dart';
 import 'package:final_project/screens/main_wrapper.dart';
 import 'package:final_project/screens/order_screen.dart';
 import 'package:final_project/screens/profile_screen.dart';
+import 'package:final_project/screens/shopping_cart_screen.dart';
 import 'package:final_project/screens/sign_in_screen.dart';
 import 'package:final_project/screens/sign_up_screen.dart';
 import 'package:final_project/screens/splash_screen.dart';
@@ -65,6 +66,12 @@ class AppNavigation {
                 builder: (BuildContext context, GoRouterState state) =>
                 const HomeScreen(),
               ),
+              // GoRoute(
+              //   path: "/new-route",
+              //   name: "new-route",
+              //   builder: (BuildContext context, GoRouterState state) =>
+              //   const ShoppingCartScreen(),
+              // ),
             ],
           ),
 
@@ -73,8 +80,8 @@ class AppNavigation {
             navigatorKey: _shellNavigatorMyOrders,
             routes: <RouteBase>[
               GoRoute(
-                path: "/my-orders",
-                name: "my-orders",
+                path: "/shopping-cart",
+                name: "shopping-cart",
                 builder: (BuildContext context, GoRouterState state) =>
                 const OrderScreen(),
               ),

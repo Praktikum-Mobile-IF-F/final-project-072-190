@@ -34,9 +34,6 @@ class _SignInPageState extends State<SignInScreen> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('user', json.encode({'email': email}));
 
-        // Debug statement to verify successful storage
-        print('User data stored in SharedPreferences');
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Sign In Successful!'),

@@ -1,4 +1,5 @@
 import 'package:final_project/models/boxes.dart';
+import 'package:final_project/models/cart.dart';
 import 'package:final_project/models/favorite.dart';
 import 'package:final_project/navigation/app_navigation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,10 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(FavoriteAdapter());
   Hive.registerAdapter(FavoriteProductAdapter());
+  Hive.registerAdapter(CartAdapter());
+  Hive.registerAdapter(CartProductAdapter());
   await Hive.openBox<Favorite>(HiveBoxes.favorite);
+  await Hive.openBox<Cart>(HiveBoxes.cart);
   runApp(const MyApp());
 }
 
