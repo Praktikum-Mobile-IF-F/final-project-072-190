@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:final_project/models/product.dart';
 import 'package:final_project/services/product_service.dart';
 import 'package:final_project/utils/colors.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,13 +14,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Product> products = [];
   bool isLoading = true;
-
-  Future<void> _signOut(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('isLoggedIn');
-    await prefs.remove('loggedInUserData');
-    context.go('/signin');
-  }
 
   void fetchProduct() async {
     setState(() {
@@ -53,14 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-            ),
-            onPressed: () => _signOut(context),
-          ),
-        ],
       ),
       body: isLoading
           ? Center(

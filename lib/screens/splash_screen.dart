@@ -15,14 +15,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    getValidationData();
+    _checkSession();
   }
 
-  Future<void> getValidationData() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var isLoggedIn = sharedPreferences.getBool('isLoggedIn') ?? false;
-    if (isLoggedIn) {
+  Future<void> _checkSession() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? user = prefs.getString('user');
+    if (user != null) {
       context.goNamed("home");
+    } else {
+      Future.delayed(const Duration(seconds: 3), () {
+        setState(() {});
+      });
     }
   }
 

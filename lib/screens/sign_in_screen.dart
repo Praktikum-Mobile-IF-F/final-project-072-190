@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:final_project/providers/auth_provider.dart';
 import 'package:final_project/utils/colors.dart';
 import 'package:flutter/gestures.dart';
@@ -27,19 +26,34 @@ class _SignInPageState extends State<SignInScreen> {
       String password = _passwordController.text.trim();
 
       try {
+        // Debug statement to verify method call
+        print('Attempting sign-in with email: $email');
+
         await Provider.of<Auth>(context, listen: false).signin(email, password);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('user', json.encode({'email': email}));
+
+        // Debug statement to verify successful storage
+        print('User data stored in SharedPreferences');
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Sign Up Successful!'),
+            content: Text('Sign In Successful!'),
           ),
         );
+
         context.goNamed("home");
 
         _emailController.clear();
         _passwordController.clear();
       } catch (error) {
+        // Debug statement to print error
+        print('Sign-in error: $error');
         _showErrorDialog(error.toString());
       }
+    } else {
+      print('Form validation failed');
     }
   }
 
