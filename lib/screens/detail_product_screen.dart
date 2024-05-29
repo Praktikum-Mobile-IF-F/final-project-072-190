@@ -1,11 +1,12 @@
+import 'package:final_project/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/models/product_detail.dart';
 import 'package:final_project/services/product_detail_service.dart';
 
 class DetailScreen extends StatefulWidget {
-  final String url;
+  final Product product;
 
-  DetailScreen({required this.url});
+  DetailScreen({required this.product});
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -20,7 +21,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    _productDetailFuture = ProductDetailService().fetchProductDetail(widget.url);
+    _productDetailFuture = ProductDetailService().fetchProductDetail(widget.product.url!);
   }
 
   @override
@@ -64,6 +65,15 @@ class _DetailScreenState extends State<DetailScreen> {
                     style: TextStyle(fontSize: 24),
                   ),
                   SizedBox(height: 16),
+                  Text(
+                    widget.product.price != null
+                        ? '${widget.product.price!.currency} ${widget.product.price!.current!.value}'
+                        : 'Price not available',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                   ExpansionTile(
                     title: Text(
                       'About Me',
