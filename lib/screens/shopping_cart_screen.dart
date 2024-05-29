@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:final_project/screens/history_order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -135,7 +136,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OrderScreen(),
+            builder: (context) => HistoryOrderScreen(),
           ),
         );
       }

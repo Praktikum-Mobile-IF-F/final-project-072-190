@@ -1,12 +1,14 @@
 import 'dart:convert';
 
-import 'package:final_project/models/order.dart';
+import 'package:final_project/screens/detail_product_screen.dart';
+import 'package:final_project/screens/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:final_project/models/order.dart';
 
 class HistoryOrderScreen extends StatefulWidget {
-  const HistoryOrderScreen({super.key});
+  const HistoryOrderScreen({Key? key}) : super(key: key);
 
   @override
   State<HistoryOrderScreen> createState() => _HistoryOrderScreenState();
@@ -20,12 +22,6 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
   void initState() {
     super.initState();
     _loadUserData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadOrderedProducts();
   }
 
   Future<void> _loadUserData() async {
@@ -42,19 +38,21 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
   Future<void> _loadOrderedProducts() async {
     final orderBox = await Hive.openBox<Order>('orderBox');
     Order? order = orderBox.get(_email);
-    setState(() {
-      orderedProducts = order?.products.toList().reversed.toList() ?? [];
-    });
+    if (order != null) {
+      setState(() {
+        orderedProducts = order.products
+            .toList()
+            .reversed
+            .toList();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      _loadOrderedProducts();
-    });
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Ordered Products',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -63,7 +61,7 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
         centerTitle: true,
       ),
       body: orderedProducts.isEmpty
-          ? const Center(
+          ? Center(
         child: Text(
           'No ordered products available',
           style: TextStyle(
@@ -76,16 +74,15 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
         itemCount: orderedProducts.length,
         itemBuilder: (context, index) {
           final orderedProduct = orderedProducts[index];
-          // final product = convertFavoriteProduct(favoriteProduct);
           return ListTile(
-            // onTap: () {
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => DetailScreen(product: product),
-            //     ),
-            //   );
-            // },
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderDetailScreen(orderedProduct: orderedProduct),
+                ),
+              );
+            },
             title: Container(
               height: 130,
               decoration: BoxDecoration(
@@ -105,92 +102,65 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
               ),
               child: Row(
                 children: [
-                  // Column(
-                  //   children: [
-                  //     Padding(
-                  //       padding: const EdgeInsets.all(14.0),
-                  //       child: SizedBox(
-                  //         height: 100,
-                  //         width: 110,
-                  //         child: ClipRRect(
-                  //           borderRadius: BorderRadius.circular(12),
-                  //           child: Image.network(
-                  //             favoriteProduct.imageUrl ?? 'No Image Url',
-                  //             fit: BoxFit.contain,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     )
-                  //   ],
-                  // ),
                   SizedBox(
                     height: 100,
-                    width: 200,
+                    width: 100,
+                    child: Image.network(
+                      orderedProduct.products.isNotEmpty
+                          ? orderedProduct.products[0].imageUrl ?? ''
+                          : 'No Image URL',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                orderedProduct.totalPrice ?? 'No Total Price' ,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          'Order ID: ${orderedProduct.orderId}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 2),
-                        // Row(
-                        //   children: [
-                        //     Expanded(
-                        //       child: Text(
-                        //         favoriteProduct.brandName ?? 'No Brand Name',
-                        //         overflow: TextOverflow.ellipsis,
-                        //         maxLines: 1,
-                        //         style: const TextStyle(
-                        //           fontSize: 14,
-                        //           color: Colors.black54,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        // const SizedBox(height: 2),
-                        // Row(
-                        //   children: [
-                        //     Expanded(
-                        //       child: Text(
-                        //         '${favoriteProduct.priceCurrency} ${favoriteProduct.priceValue}',
-                        //         overflow: TextOverflow.ellipsis,
-                        //         maxLines: 1,
-                        //         style: const TextStyle(
-                        //           fontSize: 14,
-                        //           color: Colors.black,
-                        //           fontWeight: FontWeight.bold,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        // const SizedBox(height: 2),
-                        // Row(
-                        //   children: [
-                        //     Expanded(
-                        //       child: Text(
-                        //         '${job.annualSalaryMin} - ${job.annualSalaryMax}',
-                        //         overflow: TextOverflow.ellipsis,
-                        //         maxLines: 1,
-                        //         style: const TextStyle(
-                        //           fontSize: 14,
-                        //           color: Colors.black54,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Total Price: ${orderedProduct.totalPrice}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Items: ${orderedProduct.products.length}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Products:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: orderedProduct.products.length,
+                            itemBuilder: (context, i) {
+                              final product = orderedProduct.products[i];
+                              return ListTile(
+                                title: Text(
+                                  '${product.name}, ${product.priceCurrency} ${product.priceValue}',
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -198,8 +168,10 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
               ),
             ),
           );
+          ;
         },
       ),
     );
   }
 }
+
