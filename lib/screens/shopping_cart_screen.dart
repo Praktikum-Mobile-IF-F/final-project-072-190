@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:final_project/models/cart.dart';
-import 'package:final_project/models/order.dart'; // Sesuaikan dengan struktur model Order Anda
-import 'package:final_project/models/product.dart'; // Sesuaikan dengan struktur model Product Anda
+import 'package:final_project/models/order.dart';
+import 'package:final_project/models/product.dart';
 import 'package:final_project/screens/detail_product_screen.dart';
-import 'package:final_project/screens/order_screen.dart'; // Pastikan path OrderScreen sudah sesuai
+import 'package:final_project/screens/order_screen.dart';
 
 class ShoppingCartScreen extends StatefulWidget {
   const ShoppingCartScreen({Key? key}) : super(key: key);
@@ -114,18 +114,30 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           products: selectedProducts,
         );
 
-        // Save orderedProduct to Hive
-        final orderedBox = await Hive.openBox<OrderedProduct>('orderBox');
-        await orderedBox.add(orderedProduct);
-        await orderedBox.close();
+        final orderBox = await Hive.openBox<Order>('orderBox');
+        Order? order = orderBox.get(_email);
+
+        if (order == null) {
+          order = Order(email: _email, products: []);
+        }
+
+        order.products.add(orderedProduct);
+        await orderBox.put(_email, order);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Order Successful'),
+            backgroundColor: Colors.green,
+          ),
+        );
 
         // Navigate to OrderScreen
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => OrderScreen(),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderScreen(),
+          ),
+        );
       }
     }
   }
@@ -167,7 +179,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailScreen(product: product),
+                        builder: (context) =>
+                            DetailScreen(product: product),
                       ),
                     );
                   },
@@ -200,9 +213,11 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                                     height: 100,
                                     width: 80,
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius:
+                                      BorderRadius.circular(12),
                                       child: Image.network(
-                                        cartProduct.imageUrl ?? 'No Image Url',
+                                        cartProduct.imageUrl ??
+                                            'No Image Url',
                                         fit: BoxFit.contain,
                                       ),
                                     ),
@@ -214,8 +229,10 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                               height: 100,
                               width: 170,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     cartProduct.name ?? 'No Name',
@@ -227,7 +244,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    cartProduct.productSize ?? 'No Product Size',
+                                    cartProduct.productSize ??
+                                        'No Product Size',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: const TextStyle(
@@ -254,7 +272,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                         Align(
                           alignment: Alignment.bottomRight,
                           child: IconButton(
-                            icon: Icon(Icons.restore_from_trash_outlined, color: Colors.red),
+                            icon: Icon(Icons.restore_from_trash_outlined,
+                                color: Colors.red),
                             onPressed: () {
                               removeItem(index);
                             },
