@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:final_project/models/favorite.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/models/product_detail.dart';
 import 'package:final_project/services/product_detail_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailScreen extends StatefulWidget {
   final String url;
@@ -12,15 +17,59 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  late String _email = '';
   late Future<ProductDetail?> _productDetailFuture;
   String? _selectedSize;
   static const Color backgroundColor1 = Color(0xffFFFFFF);
-  bool _isFavorite = false;
+  late bool _isFavorite = false;
+  late bool isFavorited = false;
 
   @override
   void initState() {
     super.initState();
     _productDetailFuture = ProductDetailService().fetchProductDetail(widget.url);
+    _loadUserData();
+    _checkIfFavorited();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? user = prefs.getString('user');
+    if (user != null) {
+      setState(() {
+        _email = json.decode(user)['email'];
+      });
+    }
+  }
+
+  Future<void> _checkIfFavorited() async {
+    // Box<Favorite> favoriteBox = await Hive.openBox<Favorite>('favoriteBox');
+    // final favorite = favoriteBox.get(_email);
+    // setState(() {
+    //   _isFavorite = favorite.products.any((product) => product.id == _productDetailFuture.id);
+    // });
+  }
+
+  void _toggleFavorite() async {
+    // Box<Favorite> favoriteBox = await Hive.openBox<Favorite>('favorites');
+    // Favorite? favorite = favoriteBox.values.firstWhere(
+    //       (favorite) => favorite.email == _email,
+    //   orElse: () => null,
+    // );
+    // if (favorite != null) {
+    //   if (_isFavorite) {
+    //     favorite.products.removeWhere((product) => product.id == _productDetailFuture.id);
+    //   } else {
+    //     favorite.products.add(_productDetailFuture);
+    //   }
+    //   favorite.save();
+    // } else {
+    //   favorite = Favorite(id: UniqueKey().toString(), email: _email, products: [_productDetailFuture]);
+    //   favoriteBox.add(favorite);
+    // }
+    // setState(() {
+    //   _isFavorite = !_isFavorite;
+    // });
   }
 
   @override
@@ -137,17 +186,19 @@ class _DetailScreenState extends State<DetailScreen> {
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(backgroundColor1),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isFavorite = !_isFavorite;
-                                final snackBar = SnackBar(
-                                  content: Text(
-                                    _isFavorite ? 'Added to favorites' : 'Removed from favorites',
-                                  ),
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                              });
-                            },
+                            onPressed: _toggleFavorite,
+
+                            //     () {
+                            //   setState(() {
+                            //     _isFavorite = !_isFavorite;
+                            //     final snackBar = SnackBar(
+                            //       content: Text(
+                            //         _isFavorite ? 'Added to favorites' : 'Removed from favorites',
+                            //       ),
+                            //     );
+                            //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            //   });
+                            // },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
