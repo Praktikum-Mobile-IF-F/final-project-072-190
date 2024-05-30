@@ -50,6 +50,9 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _loadOrderedProducts();
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text(

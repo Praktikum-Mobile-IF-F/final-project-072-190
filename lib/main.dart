@@ -2,6 +2,7 @@ import 'package:final_project/models/boxes.dart';
 import 'package:final_project/models/cart.dart';
 import 'package:final_project/models/favorite.dart';
 import 'package:final_project/models/order.dart';
+import 'package:final_project/models/user.dart';
 import 'package:final_project/navigation/app_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,9 +19,11 @@ void main() async {
   Hive.registerAdapter(CartProductAdapter());
   Hive.registerAdapter(OrderAdapter());
   Hive.registerAdapter(OrderedProductAdapter());
+  Hive.registerAdapter(UserAdapter());
   await Hive.openBox<Favorite>(HiveBoxes.favorite);
   await Hive.openBox<Cart>(HiveBoxes.cart);
   await Hive.openBox<Cart>(HiveBoxes.order);
+  await Hive.openBox<Cart>(HiveBoxes.user);
   runApp(const MyApp());
 }
 
