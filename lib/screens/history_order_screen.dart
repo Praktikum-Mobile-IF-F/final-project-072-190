@@ -24,6 +24,12 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
     _loadUserData();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadOrderedProducts();
+  }
+
   Future<void> _loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? user = prefs.getString('user');

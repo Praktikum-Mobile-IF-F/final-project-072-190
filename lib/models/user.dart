@@ -16,12 +16,11 @@ class User extends HiveObject {
   final String birth;
 
   @HiveField(3)
-  final String address;
+  String? address;
 
 
   User({
     required this.email,
     required this.birth,
-    required this.address,
   });
 }

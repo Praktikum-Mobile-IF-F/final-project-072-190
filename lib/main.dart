@@ -22,8 +22,8 @@ void main() async {
   Hive.registerAdapter(UserAdapter());
   await Hive.openBox<Favorite>(HiveBoxes.favorite);
   await Hive.openBox<Cart>(HiveBoxes.cart);
-  await Hive.openBox<Cart>(HiveBoxes.order);
-  await Hive.openBox<Cart>(HiveBoxes.user);
+  await Hive.openBox<Order>(HiveBoxes.order);
+  await Hive.openBox<User>(HiveBoxes.user);
   runApp(const MyApp());
 }
 

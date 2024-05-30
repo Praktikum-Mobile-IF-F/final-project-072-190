@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:final_project/models/user.dart';
 import 'package:final_project/providers/auth_provider.dart';
 import 'package:final_project/utils/colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,9 +28,6 @@ class _SignInPageState extends State<SignInScreen> {
       String password = _passwordController.text.trim();
 
       try {
-        // Debug statement to verify method call
-        print('Attempting sign-in with email: $email');
-
         await Provider.of<Auth>(context, listen: false).signin(email, password);
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -45,8 +44,6 @@ class _SignInPageState extends State<SignInScreen> {
         _emailController.clear();
         _passwordController.clear();
       } catch (error) {
-        // Debug statement to print error
-        print('Sign-in error: $error');
         _showErrorDialog(error.toString());
       }
     } else {

@@ -1,36 +1,51 @@
 import 'dart:convert';
+
+import 'package:final_project/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfilePageState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfilePageState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   late String _email = '';
+  User? currentUser = null;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadUser();
   }
 
-  Future<void> _loadUserData() async {
+  Future<void> _loadUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? user = prefs.getString('user');
-    if (user != null) {
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
       setState(() {
-        _email = json.decode(user)['email'];
+        _email = json.decode(userJson)['email'];
       });
+
+      final userBox = await Hive.openBox<User>('userBox');
+      User? currentUser = userBox.values.firstWhere(
+              (user) => user.email == _email);
+      if (currentUser != null) {
+        setState(() {
+          // Menetapkan currentUser
+          this.currentUser = currentUser;
+        });
+      }
     }
   }
 
   Future<void> _signOut(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
     await prefs.remove('user');
     context.go('/signin');
   }
@@ -50,15 +65,18 @@ class _ProfilePageState extends State<ProfileScreen> {
         actions: [
           IconButton(
             icon: const Icon(
-              Icons.shopping_cart_outlined,
+              Icons.logout,
             ),
             onPressed: () => _signOut(context),
           ),
         ],
       ),
-      body: Container(
+      body: _email.isEmpty
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          :Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
             const Padding(
@@ -66,7 +84,7 @@ class _ProfilePageState extends State<ProfileScreen> {
               child: Center(
                 child: CircleAvatar(
                   radius: 80,
-                  // backgroundImage: AssetImage('images/profile.png'),
+                  backgroundImage: AssetImage('lib/assets/images/profile.png'),
                 ),
               ),
             ),
@@ -78,26 +96,52 @@ class _ProfilePageState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                const Text(
-                  'Email',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
+            _email.isNotEmpty
+                ? Container(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Email',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20
+                      ),
+                    ),
+                    Text(
+                      currentUser?.email ?? 'No email available',
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Date of Birth',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20
+                      ),
+                    ),
+                    Text(
+                      currentUser?.birth ?? 'No date of birth available',
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  _email,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
+              ),
+            )
+                : const Text(
+              'No user data available',
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),

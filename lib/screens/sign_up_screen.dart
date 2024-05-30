@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:final_project/models/user.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,11 +34,20 @@ class _SignUpPageState extends State<SignUpScreen> {
 
       try {
         await Provider.of<Auth>(context, listen: false).signup(email, password);
+        final userBox = await Hive.openBox<User>('userBox');
+
+        userBox.put(email, User(
+          email: email,
+          birth: birthDate,
+        ));
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Sign Up Successful!'),
+            backgroundColor: Colors.green,
           ),
         );
+
         context.goNamed("signin");
 
         _emailController.clear();
