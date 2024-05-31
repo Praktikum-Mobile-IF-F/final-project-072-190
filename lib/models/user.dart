@@ -22,5 +22,6 @@ class User extends HiveObject {
   User({
     required this.email,
     required this.birth,
+    this.address,
   });
 }

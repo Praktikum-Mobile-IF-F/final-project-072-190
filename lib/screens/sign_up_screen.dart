@@ -44,7 +44,6 @@ class _SignUpPageState extends State<SignUpScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Sign Up Successful!'),
-            backgroundColor: Colors.green,
           ),
         );
 

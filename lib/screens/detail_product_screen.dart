@@ -120,7 +120,6 @@ class _DetailScreenState extends State<DetailScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Successfully added to cart with size: $selectedSize'),
-        backgroundColor: Colors.green,
       ),
     );
   }

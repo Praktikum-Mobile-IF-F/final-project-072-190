@@ -1,3 +1,4 @@
+import 'package:final_project/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/models/order.dart';
 
@@ -49,6 +50,7 @@ class OrderDetailScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final product = orderedProduct.products[index];
                 return Card(
+                  color: Colors.white,
                   elevation: 3,
                   margin: EdgeInsets.symmetric(vertical: 8),
                   child: Padding(
@@ -84,10 +86,18 @@ class OrderDetailScreen extends StatelessWidget {
                                 '${product.priceCurrency} ${product.priceValue}',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey,
+                                  color: textColor1,
                                 ),
                               ),
                               SizedBox(height: 4),
+                              Text(
+                                '${product.productSize}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor1,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                         ),

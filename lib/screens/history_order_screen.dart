@@ -112,8 +112,8 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
               child: Row(
                 children: [
                   SizedBox(
-                    height: 100,
-                    width: 100,
+                    height: 120,
+                    width: 120,
                     child: Image.network(
                       orderedProduct.products.isNotEmpty
                           ? orderedProduct.products[0].imageUrl ?? ''
@@ -123,54 +123,36 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
                   ),
                   SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Order ID: ${orderedProduct.orderId}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Order ID: ${orderedProduct.orderId}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Total Price: ${orderedProduct.totalPrice}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
+                          const SizedBox(height: 4),
+                          Text(
+                            'Total Price: ${orderedProduct.totalPrice}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Items: ${orderedProduct.products.length}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
+                          const SizedBox(height: 4),
+                          Text(
+                            'Items: ${orderedProduct.products.length}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Products:',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: orderedProduct.products.length,
-                            itemBuilder: (context, i) {
-                              final product = orderedProduct.products[i];
-                              return ListTile(
-                                title: Text(
-                                  '${product.name}, ${product.priceCurrency} ${product.priceValue}',
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                        ],
+                      ),
                     ),
                   ),
                 ],

@@ -15,7 +15,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late String _email = '';
-  User? currentUser = null;
+  User? currentUser;
+  bool _isEditing = false;
+  final TextEditingController _addressController = TextEditingController();
 
   @override
   void initState() {
@@ -32,12 +34,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
 
       final userBox = await Hive.openBox<User>('userBox');
-      User? currentUser = userBox.values.firstWhere(
-              (user) => user.email == _email);
+      User? currentUser = userBox.values.firstWhere((user) => user.email == _email);
       if (currentUser != null) {
         setState(() {
-          // Menetapkan currentUser
           this.currentUser = currentUser;
+          _addressController.text = currentUser.address ?? '';
         });
       }
     }
@@ -48,6 +49,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.setBool('isLoggedIn', false);
     await prefs.remove('user');
     context.go('/signin');
+  }
+
+  Future<void> _saveProfile() async {
+    if (currentUser != null) {
+      final userBox = await Hive.openBox<User>('userBox');
+      currentUser!.address = _addressController.text;
+      await currentUser!.save();
+      setState(() {
+        _isEditing = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,83 +87,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             onPressed: () => _signOut(context),
           ),
+          IconButton(
+            icon: Icon(
+              _isEditing ? Icons.check : Icons.edit,
+            ),
+            onPressed: () {
+              if (_isEditing) {
+                _saveProfile();
+              } else {
+                setState(() {
+                  _isEditing = true;
+                });
+              }
+            },
+          ),
         ],
       ),
       body: _email.isEmpty
           ? const Center(
         child: CircularProgressIndicator(),
       )
-          :Container(
-        width: double.infinity,
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 30.0),
-              child: Center(
-                child: CircleAvatar(
-                  radius: 80,
-                  backgroundImage: AssetImage('lib/assets/images/profile.png'),
+          : SingleChildScrollView(
+            child: Container(
+                    width: double.infinity,
+                    child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 30.0),
+                child: Center(
+                  child: CircleAvatar(
+                    radius: 80,
+                    backgroundImage: AssetImage('lib/assets/images/profile.png'),
+                  ),
                 ),
               ),
-            ),
-            Text(
-              _email.split('@').first,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            _email.isNotEmpty
-                ? Container(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Email',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
-                      ),
-                    ),
-                    Text(
-                      currentUser?.email ?? 'No email available',
-                      style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Date of Birth',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
-                      ),
-                    ),
-                    Text(
-                      currentUser?.birth ?? 'No date of birth available',
-                      style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54
-                      ),
-                    ),
-                  ],
+              Text(
+                _email.split('@').first,
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            )
-                : const Text(
-              'No user data available',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: 20),
+              _email.isNotEmpty
+                  ? Container(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Email',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      Text(
+                        currentUser?.email ?? 'No email available',
+                        style: const TextStyle(fontSize: 20, color: Colors.black54),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Date of Birth',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      Text(
+                        currentUser?.birth ?? 'No date of birth available',
+                        style: const TextStyle(fontSize: 20, color: Colors.black54),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Address',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      _isEditing
+                          ? TextField(
+                        controller: _addressController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter address',
+                        ),
+                      )
+                          : Text(
+                        currentUser?.address ?? 'No address available',
+                        style: const TextStyle(fontSize: 20, color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+                  : const Text(
+                'No user data available',
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+                    ),
+                  ),
+          ),
     );
   }
 }
