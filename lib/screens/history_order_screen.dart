@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:final_project/screens/detail_product_screen.dart';
-import 'package:final_project/screens/order_screen.dart';
+import 'package:final_project/screens/order_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,53 +109,56 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
                   ),
                 ],
               ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: 120,
-                    width: 120,
-                    child: Image.network(
-                      orderedProduct.products.isNotEmpty
-                          ? orderedProduct.products[0].imageUrl ?? ''
-                          : 'No Image URL',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Order ID: ${orderedProduct.orderId}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Total Price: ${orderedProduct.totalPrice}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Items: ${orderedProduct.products.length}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                        ],
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 120,
+                      width: 100,
+                      child: Image.network(
+                        orderedProduct.products.isNotEmpty
+                            ? orderedProduct.products[0].imageUrl ?? ''
+                            : 'No Image URL',
+                        fit: BoxFit.fitHeight,
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Order ID: ${orderedProduct.orderId}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Total Price: ${orderedProduct.totalPrice}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Items: ${orderedProduct.products.length}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

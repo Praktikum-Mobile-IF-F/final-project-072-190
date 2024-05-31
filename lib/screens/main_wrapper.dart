@@ -38,7 +38,7 @@ class _MainWrapperState extends State<MainWrapper> {
         height: 68,
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: primaryColor,
+          selectedItemColor: buttonColor1,
           unselectedItemColor: const Color(0xff9EA4AE),
           currentIndex: selectedIndex,
           onTap: (index) {

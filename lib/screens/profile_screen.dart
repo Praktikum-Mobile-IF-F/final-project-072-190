@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:final_project/models/user.dart';
+import 'package:final_project/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -80,37 +81,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.logout,
-            ),
-            onPressed: () => _signOut(context),
-          ),
-          IconButton(
-            icon: Icon(
-              _isEditing ? Icons.check : Icons.edit,
-            ),
-            onPressed: () {
-              if (_isEditing) {
-                _saveProfile();
-              } else {
-                setState(() {
-                  _isEditing = true;
-                });
-              }
-            },
-          ),
-        ],
       ),
       body: _email.isEmpty
           ? const Center(
         child: CircularProgressIndicator(),
       )
           : SingleChildScrollView(
-            child: Container(
-                    width: double.infinity,
-                    child: Column(
+        child: Container(
+          width: double.infinity,
+          child: Column(
             children: [
               const Padding(
                 padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 30.0),
@@ -157,9 +136,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: const TextStyle(fontSize: 20, color: Colors.black54),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Address',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      Row(
+                        children: [
+                          const Text(
+                            'Address',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              _isEditing ? Icons.check : Icons.edit,
+                            ),
+                            onPressed: () {
+                              if (_isEditing) {
+                                _saveProfile();
+                              } else {
+                                setState(() {
+                                  _isEditing = true;
+                                });
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       _isEditing
                           ? TextField(
@@ -172,6 +169,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         currentUser?.address ?? 'No address available',
                         style: const TextStyle(fontSize: 20, color: Colors.black54),
                       ),
+                      SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: () => _signOut(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          minimumSize: Size(size.width, 54),
+                        ),
+                        child: const Text(
+                          "Sign Out",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -181,9 +197,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(fontSize: 18),
               ),
             ],
-                    ),
-                  ),
           ),
+        ),
+      ),
     );
   }
 }

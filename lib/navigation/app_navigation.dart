@@ -2,7 +2,7 @@ import 'package:final_project/screens/favorite_screen.dart';
 import 'package:final_project/screens/history_order_screen.dart';
 import 'package:final_project/screens/home_screen.dart';
 import 'package:final_project/screens/main_wrapper.dart';
-import 'package:final_project/screens/order_screen.dart';
+import 'package:final_project/screens/order_detail_screen.dart';
 import 'package:final_project/screens/profile_screen.dart';
 import 'package:final_project/screens/shopping_cart_screen.dart';
 import 'package:final_project/screens/sign_in_screen.dart';

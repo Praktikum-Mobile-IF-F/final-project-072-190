@@ -4,14 +4,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class ProductService {
-  static const String baseUrl = 'https://asos-com1.p.rapidapi.com/products/search-by-category';
+  static const String baseUrl = 'https://asos-com1.p.rapidapi.com/products/search';
   final String apiKey = dotenv.env['RAPID_API_KEY'] ?? '';
   static const String apiHost = 'asos-com1.p.rapidapi.com';
 
   Future<List<Product>> fetchProducts(String query) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl?cid=$query'),
+        Uri.parse('$baseUrl?q=$query'),
         headers: {
           'X-RapidAPI-Key': apiKey,
           'X-RapidAPI-Host': apiHost,

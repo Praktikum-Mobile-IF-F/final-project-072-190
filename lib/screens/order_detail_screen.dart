@@ -11,7 +11,12 @@ class OrderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order Detail'),
+        title: const Text(
+          'Ordert Detail',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -50,7 +55,7 @@ class OrderDetailScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final product = orderedProduct.products[index];
                 return Card(
-                  color: Colors.white,
+                  color: backgroundColor1,
                   elevation: 3,
                   margin: EdgeInsets.symmetric(vertical: 8),
                   child: Padding(
@@ -60,12 +65,12 @@ class OrderDetailScreen extends StatelessWidget {
                       children: [
                         Container(
                           width: 80,
-                          height: 80,
+                          height: 120,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
                               image: NetworkImage(product.imageUrl ?? ''),
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fitHeight,
                             ),
                           ),
                         ),
