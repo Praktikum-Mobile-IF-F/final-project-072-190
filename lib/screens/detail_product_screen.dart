@@ -1,4 +1,3 @@
-
 import 'package:final_project/models/cart.dart';
 import 'package:final_project/models/product.dart';
 import 'dart:convert';
@@ -29,7 +28,8 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    _productDetailFuture = ProductDetailService().fetchProductDetail(widget.product.url!);
+    _productDetailFuture =
+        ProductDetailService().fetchProductDetail(widget.product.url!);
     _loadUserData();
     _checkIfFavorited();
   }
@@ -48,7 +48,8 @@ class _DetailScreenState extends State<DetailScreen> {
     Box<Favorite> favoriteBox = await Hive.openBox<Favorite>('favoriteBox');
     final favorite = favoriteBox.get(_email);
     setState(() {
-      isFavorited = favorite?.products.any((product) => product.productId == widget.product.id) ?? false;
+      isFavorited = favorite?.products.any((product) => product.productId ==
+          widget.product.id) ?? false;
     });
   }
 
@@ -61,7 +62,8 @@ class _DetailScreenState extends State<DetailScreen> {
     Favorite? favorite = favoriteBox.get(_email);
     if (isFavorited) {
       if (favorite == null) {
-        favorite = Favorite(email: _email, products: [convertProduct(widget.product)]);
+        favorite =
+            Favorite(email: _email, products: [convertProduct(widget.product)]);
         favoriteBox.put(_email, favorite);
       } else {
         favorite.products.add(convertProduct(widget.product));
@@ -74,7 +76,8 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     } else {
       if (favorite != null) {
-        favorite.products.removeWhere((product) => product.productId == widget.product.id);
+        favorite.products.removeWhere((product) =>
+        product.productId == widget.product.id);
         favorite.save();
       }
       ScaffoldMessenger.of(context).showSnackBar(
@@ -89,7 +92,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return FavoriteProduct(
       productId: product.id!,
       name: product.name ?? '',
-      brandName: product.brandName?? '',
+      brandName: product.brandName ?? '',
       imageUrl: product.imageUrl ?? '',
       priceCurrency: product.price?.currency ?? '',
       priceValue: product.price?.current?.value ?? 0.0,
@@ -173,6 +176,49 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ),
                   SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_selectedSize == null ||
+                                _selectedSize == 'Select Size') {
+                              _showSizeErrorDialog();
+                            } else {
+                              addToCart(widget.product, _selectedSize!);
+                            }
+                          },
+                          child: Text('Add to Cart'),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                backgroundColor1),
+                          ),
+                          onPressed: _toggleFavorite,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Favorite',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              SizedBox(width: 2),
+                              Icon(
+                                isFavorited ? Icons.favorite : Icons
+                                    .favorite_border,
+                                color: isFavorited ? Colors.red : Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
                   Text(
                     productDetail.name,
                     style: TextStyle(fontSize: 24),
@@ -180,17 +226,21 @@ class _DetailScreenState extends State<DetailScreen> {
                   SizedBox(height: 16),
                   Text(
                     widget.product.price != null
-                        ? '${widget.product.price!.currency} ${widget.product.price!.current!.value}'
+                        ? '${widget.product.price!.currency} ${widget.product
+                        .price!.current!.value}'
                         : 'Price not available',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: 17,
                     ),
                   ),
+                  SizedBox(height: 16),
+                  _buildSizeDropdown(productDetail.variants),
                   ExpansionTile(
                     title: Text(
                       'About Me',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     children: [
                       Padding(
@@ -206,7 +256,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   ExpansionTile(
                     title: Text(
                       'Brand Description',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     children: [
                       Padding(
@@ -222,7 +273,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   ExpansionTile(
                     title: Text(
                       'Product Description',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     children: [
                       Padding(
@@ -235,52 +287,6 @@ class _DetailScreenState extends State<DetailScreen> {
                     ],
                   ),
                   SizedBox(height: 8),
-                  _buildSizeDropdown(productDetail.variants),
-                  SizedBox(height: 16),
-                  Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_selectedSize == null || _selectedSize == 'Select Size') {
-                                _showSizeErrorDialog();
-                              } else {
-                                addToCart(widget.product, _selectedSize!);
-                              }
-                            },
-                            child: Text('Add to Cart'),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(backgroundColor1),
-                            ),
-                            onPressed:
-                              _toggleFavorite,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Favorite',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                SizedBox(width: 2),
-                                Icon(
-                                  isFavorited ? Icons.favorite : Icons.favorite_border,
-                                  color: isFavorited ? Colors.red : Colors.black,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             );
@@ -297,7 +303,9 @@ class _DetailScreenState extends State<DetailScreen> {
       return Center(child: Text('No sizes available'));
     }
 
-    List<String> sizes = variants.map((variant) => variant.size).toSet().toList();
+    List<String> sizes = variants.map((variant) => variant.size)
+        .toSet()
+        .toList();
     sizes.insert(0, 'Select Size');
 
     String initialValue = _selectedSize ?? sizes[0];

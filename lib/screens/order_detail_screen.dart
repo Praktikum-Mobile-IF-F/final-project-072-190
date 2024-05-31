@@ -12,7 +12,7 @@ class OrderDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Ordert Detail',
+          'Order Detail',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -33,7 +33,7 @@ class OrderDetailScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Total Price: ${orderedProduct.totalPrice}',
+              'Total Price: USD ${orderedProduct.totalPrice}',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.black,
@@ -88,7 +88,7 @@ class OrderDetailScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                '${product.priceCurrency} ${product.priceValue}',
+                                'USD ${product.priceValue}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: textColor1,

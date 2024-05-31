@@ -46,19 +46,13 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
     Order? order = orderBox.get(_email);
     if (order != null) {
       setState(() {
-        orderedProducts = order.products
-            .toList()
-            .reversed
-            .toList();
+        orderedProducts = order.products.toList().reversed.toList();
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      _loadOrderedProducts();
-    });
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -88,7 +82,8 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => OrderDetailScreen(orderedProduct: orderedProduct),
+                  builder: (context) =>
+                      OrderDetailScreen(orderedProduct: orderedProduct),
                 ),
               );
             },
@@ -115,12 +110,12 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
                   children: [
                     SizedBox(
                       height: 120,
-                      width: 100,
+                      width: 80,
                       child: Image.network(
                         orderedProduct.products.isNotEmpty
                             ? orderedProduct.products[0].imageUrl ?? ''
                             : 'No Image URL',
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -135,14 +130,18 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Total Price: ${orderedProduct.totalPrice}',
+                              'Total Price: USD ${orderedProduct.totalPrice}',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -151,6 +150,8 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                           ],
@@ -162,10 +163,8 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
               ),
             ),
           );
-          ;
         },
       ),
     );
   }
 }
-
