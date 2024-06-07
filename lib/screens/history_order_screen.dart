@@ -47,6 +47,7 @@ class _HistoryOrderScreenState extends State<HistoryOrderScreen> {
     if (order != null) {
       setState(() {
         orderedProducts = order.products.toList().reversed.toList();
+        //order.products.clear();
       });
     }
   }
